@@ -1,0 +1,7 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//心跳时间
+message userOnlineHomeMsg{
+  string userId = 1;
+}

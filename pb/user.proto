@@ -1,0 +1,7 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//用户信息
+message user{
+  string UserName = 1;    //聊天内容
+}

@@ -1,0 +1,11 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//心跳时间
+message heartBeat{
+  string userId = 1;
+  string appCode = 2;
+  string channel = 3;
+  string platformType = 4;
+  int32 buildNumber = 5;
+}

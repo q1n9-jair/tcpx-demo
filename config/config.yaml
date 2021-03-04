@@ -1,0 +1,22 @@
+host: 127.0.0.1
+tcpPort: 8103
+version: 1.0.0
+es:
+  addr: http://127.0.0.1:9200
+redis:
+  host: 127.0.0.1:6379
+  pwd:
+  RedisDB: 10
+  Timeout: 20
+rabbitmq:
+  host: 127.0.0.1
+  port: 5672
+  username: ytao
+  password: admin123
+registryCenter:
+  host: 127.0.0.1
+  port: 8103
+  name: 200
+  appCode: all
+  channel: all
+  domain: 127.0.0.1:8103

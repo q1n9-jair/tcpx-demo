@@ -1,0 +1,7 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//通知
+message sysMsg{
+	string message = 1;
+}

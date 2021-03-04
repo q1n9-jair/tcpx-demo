@@ -1,0 +1,13 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//发送群发消息
+message sendContinuousMsg{
+  string userId = 1;
+  string appCode = 2;
+  string channel = 3;
+  string platformType = 4;
+  int32 buildNumber = 5;
+  repeated string toUserId= 6;
+  string msgContent = 7;
+}

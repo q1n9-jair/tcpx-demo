@@ -1,0 +1,13 @@
+syntax="proto3";                //Proto协议
+package pb;                     //当前包名
+
+//普通发送消息
+message getUserMsg{
+  string sendUserId = 1;
+  string appCode = 2;
+  string channel = 3;
+  string platformType = 4;
+  int32 buildNumber = 5;
+  string userId= 6;
+  string msgContent = 7;
+}
