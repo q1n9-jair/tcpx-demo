@@ -1,4 +1,7 @@
 ## 环境要求
+必要依赖
+-protoc
+-proto-gen-go
 - proto 3.10.0
 - 运行环境必须是64位
 - 设置代理GOPROXY=https://goproxy.cn
