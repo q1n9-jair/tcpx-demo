@@ -1,7 +1,9 @@
+## tcpx框架文档
+- https://github.com/fwhezfwhez/tcpx/blob/master/README-CN.md
 ## 环境要求
 必要依赖
--protoc
--proto-gen-go
+- protoc
+- proto-gen-go
 - proto 3.10.0
 - 运行环境必须是64位
 - 设置代理GOPROXY=https://goproxy.cn
