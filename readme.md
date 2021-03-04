@@ -8,14 +8,12 @@
 - linux
 - export GOPROXY=https://goproxy.cn
 - CGO_ENABLED=0
-- GOOS=linux
 - GOARCH=amd64
 - export GO111MODULE=on
 
 - win
 - go env -w GOPROXY=https://goproxy.io
 - SET CGO_ENABLED=0
-- SET GOOS=linux
 - SET GOARCH=amd64
 - go env -w GO111MODULE= on
 
