@@ -1,5 +1,6 @@
 ## tcpx框架文档
 - https://github.com/fwhezfwhez/tcpx/blob/master/README-CN.md
+- ## 如果没有ES MQ 就在dao包下把init的函数改一下名称即可
 ## 环境要求
 必要依赖
 - protoc
