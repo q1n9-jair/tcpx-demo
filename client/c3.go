@@ -12,17 +12,19 @@ import (
 	"strconv"
 	"sync"
 )
+
 var wg sync.WaitGroup
+
 func main() {
 	fmt.Println(runtime.NumCPU())
 	wg.Add(1)
 	go tskTcp()
 	wg.Wait()
 
-
 }
 
-func tskTcp()  {
+func tskTcp() {
+
 	for kk := 1; kk < 20000; kk++ {
 		s, err := snowflake.NewSnowflake(int64(0), int64(0))
 		id := s.NextVal()
