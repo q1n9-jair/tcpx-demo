@@ -9,11 +9,11 @@ import (
 	"im_socket_server/util"
 )
 
-
 /***
 上线业务处理
 */
 func Online(c *tcpx.Context) {
+
 	//接收
 	var req pb.HeartBeat
 	_, eBindWithMarshaller := c.BindWithMarshaller(&req, tcpx.ProtobufMarshaller{})
@@ -26,7 +26,7 @@ func Online(c *tcpx.Context) {
 		//上线
 		c.Online(req.UserId)
 		//设置redis和es
-		go util.SetOnlineUser(req.UserId)
+		util.SetOnlineUser(req.UserId)
 		//发送响应
 		var rep pb.SysMsg
 		rep.Message = "OnlineSuccess"
@@ -37,6 +37,3 @@ func Online(c *tcpx.Context) {
 		//省略拉未读消息。。。。
 	}
 }
-
-
-

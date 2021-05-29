@@ -8,8 +8,11 @@ import (
 	"im_socket_server/logs"
 	"im_socket_server/mode"
 	"strconv"
+	"sync"
 	"time"
 )
+
+var userStatusWg sync.WaitGroup
 
 func SetOfflineUser(userId string) {
 	defer func() {
@@ -65,6 +68,7 @@ func SetOfflineUser(userId string) {
 		}
 		logs.Loggers.Info("user.online.list", zap.String("hdel", "userId:"+userId))
 	}
+	userStatusWg.Done()
 }
 
 //设置在线用户
@@ -75,6 +79,7 @@ func SetOnlineUser(userId string) {
 			logs.Loggers.Error("SetOnlineUser:", zap.Reflect("err", errs))
 		}
 	}()
+	userStatusWg.Add(1)
 	//性别在线
 	go SetSexUserOnline(userId)
 	//获取隐私状态
@@ -95,10 +100,11 @@ func SetOnlineUser(userId string) {
 			logs.Loggers.Error("redisOlErr:", zap.Error(redisOlErr))
 		}
 		//设置es下线
+		userStatusWg.Add(1)
 		go UpdateEsOnLine(userId)
 
 	}
-
+	userStatusWg.Wait()
 }
 
 func GetUserIsOnline(userId string) int {
@@ -131,6 +137,7 @@ func DelUserOnlineServer(userId string) {
 	conn := dao.RedisDefaultPool.Get()
 	conn.Do("DEL", constant.USER_ONLINE_SERVER+userId, ServerNameKey)
 }
+
 /*
 /***
 获取用户在哪台服务器登录
@@ -200,6 +207,7 @@ func SetSexUserOnline(userId string) {
 	redisKey := constant.USER_SEX_ONLINE_LIST + strconv.Itoa(userInfo.Sex)
 	conn := dao.RedisDefaultPool.Get()
 	conn.Do("HSET", redisKey, userId, time.Now().Unix())
+	userStatusWg.Done()
 }
 
 /***
