@@ -9,6 +9,7 @@ import (
 	"im_socket_server/handler"
 	"im_socket_server/logs"
 	"im_socket_server/pb"
+	"im_socket_server/service"
 	"im_socket_server/util"
 	"log"
 	"strconv"
@@ -40,6 +41,8 @@ func main() {
 	srv.AddHandler(constant.ONLINE_CODE, handler.Online)
 	srv.AddHandler(constant.SEND_MSG_CODE, handler.Send)
 	srv.AddHandler(constant.SEND_CONTINUOUS_CODE, handler.SendContinuous)
+	//调用用户业务处理
+	userServices := service.UserServices{}
 
 	//自动检测掉线以及未发心跳
 	srv.HeartBeatModeDetail(true, 20*time.Second, false, tcpx.DEFAULT_HEARTBEAT_MESSAGEID)
@@ -55,7 +58,7 @@ func main() {
 		if req.UserId != "" {
 			logs.Loggers.Info("HeartBeat:", zap.String("userId", req.UserId))
 			//往redis续命
-			go util.SetOnlineUser(req.UserId)
+			userServices.SetOnlineUser(req.UserId)
 			//发送响应
 			var rep pb.SysMsg
 			rep.Message = "OnlineSuccess"
@@ -70,9 +73,9 @@ func main() {
 		userId, _ := c.Username()
 		if userId != "" {
 			logs.Loggers.Info("Offline-自动检测掉线", zap.String("userId", userId))
-			go util.SetOfflineUser(userId)
+			go userServices.SetOfflineUser(userId)
 			pool := c.GetPoolRef().GetClientPool(userId)
-			go util.SexUserOffline(userId)
+			go userServices.SexUserOffline(userId)
 			if pool != nil {
 				pool.CloseConn()
 				c.Offline()
@@ -91,8 +94,8 @@ func main() {
 func Cron() {
 	log.Println("Starting Cron...")
 	c := cron.New()
-	c.AddFunc("*/30 * * * * ?", util.ServerLives)
-	c.AddFunc("*/25 * * * * ?", util.CheckRedisOnline)
+	userServices := service.UserServices{}
+	c.AddFunc("*/25 * * * * ?", userServices.CheckRedisOnline)
 	c.Start()
 }
 
@@ -107,6 +110,7 @@ func init() {
 	host := c.GetString("host")
 	tcpPort := c.GetInt("tcpPort")
 	version := c.GetString("version")
+	constant.ServerNameKey = host
 
 	mode := ConfigMode{}
 	mode.Host = host
@@ -118,6 +122,5 @@ func init() {
 	logs.Loggers.Info("version：" + configMode.Version)
 	logs.Loggers.Info("serverName:" + configMode.Name)
 	logs.Loggers.Info("------ log printl ----")
-	//开始注册服务
-	util.ServerRegistryCenter()
+
 }

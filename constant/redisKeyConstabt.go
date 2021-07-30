@@ -19,5 +19,4 @@ const (
 	USER_ONLINE_SERVER = "user.online.server:"
 	//用户基础信息
 	USER_INFO = "user.info:"
-
 )

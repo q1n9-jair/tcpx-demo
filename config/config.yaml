@@ -4,7 +4,7 @@ version: 1.0.0
 es:
   addr: http://192.168.50.72:9200
 redis:
-  host: 192.168.50.72:6379
+  host: 127.0.0.1:6379
   pwd:
   RedisDB: 10
   Timeout: 20
