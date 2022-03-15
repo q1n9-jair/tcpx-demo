@@ -1,6 +1,0 @@
-{"level":"info","time":"2021-03-01T15:46:33.963+0800","caller":"D:/code/golang/KeEr/im_socket_server/logs/logutils.go:45","msg":"log 初始化成功","serviceName":"im_socket_server"}
-{"level":"info","time":"2021-03-01T15:46:33.987+0800","caller":"D:/code/golang/KeEr/im_socket_server/main/main.go:103","msg":"127.0.0.1","serviceName":"im_socket_server"}
-{"level":"info","time":"2021-03-01T15:46:33.995+0800","caller":"D:/code/golang/KeEr/im_socket_server/main/main.go:114","msg":"path:127.0.0.1:8103","serviceName":"im_socket_server"}
-{"level":"info","time":"2021-03-01T15:46:33.995+0800","caller":"D:/code/golang/KeEr/im_socket_server/main/main.go:115","msg":"version：1.0.0","serviceName":"im_socket_server"}
-{"level":"info","time":"2021-03-01T15:46:33.996+0800","caller":"D:/code/golang/KeEr/im_socket_server/main/main.go:116","msg":"serverName:192.168.100.137","serviceName":"im_socket_server"}
-{"level":"info","time":"2021-03-01T15:46:33.997+0800","caller":"D:/code/golang/KeEr/im_socket_server/main/main.go:117","msg":"------ log printl ----","serviceName":"im_socket_server"}
