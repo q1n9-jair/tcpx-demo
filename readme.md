@@ -26,7 +26,9 @@
 - go env -w GO111MODULE= on
 
 ## 项目结构体：
-- client(模拟客户端测试)
+- client(模拟客户端测试)普通发送消息
+- client2(模拟客户端测试)接收消息
+- clientBF(模拟客户端测试)并发发消息
 - config(配置文件以及读取配置文件)
 - constant(系统常量)
 - handler(处理业务handler)

@@ -3,10 +3,10 @@ package handler
 import (
 	"github.com/fwhezfwhez/tcpx"
 	"go.uber.org/zap"
-	"im_socket_server/constant"
-	"im_socket_server/logs"
-	"im_socket_server/pb"
-	"im_socket_server/service"
+	"tcpx-demo/constant"
+	"tcpx-demo/logs"
+	"tcpx-demo/pb"
+	"tcpx-demo/service"
 )
 
 /***
@@ -22,7 +22,6 @@ func Online(c *tcpx.Context) {
 		return
 	}
 	if req.UserId != "" {
-		logs.Loggers.Info("Online", zap.String("UserId", req.UserId))
 		//上线
 		c.Online(req.UserId)
 		//设置redis和es
@@ -33,9 +32,7 @@ func Online(c *tcpx.Context) {
 			return
 		}
 		//发送响应
-		var rep pb.SysMsg
-		rep.Message = "OnlineSuccess"
-		eProtoBuf := c.Reply(constant.RESPONSE_HEARTBEAT_CODE, &rep)
+		eProtoBuf := c.Reply(constant.RESPONSE_HEARTBEAT_CODE, &pb.SysMsg{Message: "OnlineSuccess"})
 		if eProtoBuf != nil {
 			logs.Loggers.Error("Online-eProtoBuf", zap.Any("eProtoBuf", eProtoBuf))
 		}

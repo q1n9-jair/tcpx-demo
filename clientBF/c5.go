@@ -2,28 +2,44 @@ package main
 
 import (
 	"fmt"
+	"github.com/GUAIK-ORG/go-snowflake/snowflake"
 	"github.com/fwhezfwhez/tcpx"
 	"net"
+	"strconv"
 	"tcpx-demo/constant"
 	"tcpx-demo/pb"
 	"time"
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8103")
-	if err != nil {
-		panic(err)
-	}
-	uid := "1355156974324420610"
-	touid := "123"
-	online(conn, uid)
+	for i := 0; i < 100; i++ {
+		go func() {
+			conn, err := net.Dial("tcp", "localhost:8103")
+			if err != nil {
+				panic(err)
+			}
+			s, err := snowflake.NewSnowflake(int64(0), int64(0))
+			id := s.NextVal()
+			uid := strconv.FormatInt(id, 10)
+			touid := "123"
+			online(conn, uid)
 
+			ticker := time.NewTicker(1 * time.Second)
+			for {
+				select {
+				case <-ticker.C:
+					heartbeat(conn, uid)
+					send(conn, uid, touid)
+				}
+			}
+
+		}()
+	}
 	ticker := time.NewTicker(1 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
-			heartbeat(conn, uid)
-			send(conn, uid, touid)
+
 		}
 	}
 

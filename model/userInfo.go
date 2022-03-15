@@ -1,4 +1,4 @@
-package mode
+package model
 
 type User struct {
 	AppCode     string `json:"appCode"`

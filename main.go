@@ -4,17 +4,16 @@ import (
 	"github.com/fwhezfwhez/tcpx"
 	"github.com/robfig/cron"
 	"go.uber.org/zap"
-	config "im_socket_server/config"
-	"im_socket_server/constant"
-	"im_socket_server/handler"
-	"im_socket_server/logs"
-	"im_socket_server/pb"
-	"im_socket_server/service"
-	"im_socket_server/util"
 	"log"
 	"strconv"
+	"tcpx-demo/config"
+	"tcpx-demo/constant"
+	"tcpx-demo/handler"
+	"tcpx-demo/logs"
+	"tcpx-demo/pb"
+	"tcpx-demo/service"
+	"tcpx-demo/utils"
 	"time"
-	//"tcpx"
 )
 
 type ConfigMode struct {
@@ -45,7 +44,7 @@ func main() {
 	userServices := service.UserServices{}
 
 	//自动检测掉线以及未发心跳
-	srv.HeartBeatModeDetail(true, 20*time.Second, false, tcpx.DEFAULT_HEARTBEAT_MESSAGEID)
+	srv.HeartBeatModeDetail(true, 5*time.Second, false, tcpx.DEFAULT_HEARTBEAT_MESSAGEID)
 	//重写心跳
 	srv.RewriteHeartBeatHandler(tcpx.DEFAULT_HEARTBEAT_MESSAGEID, func(c *tcpx.Context) {
 		defer c.RecvHeartBeat()
@@ -56,16 +55,13 @@ func main() {
 			return
 		}
 		if req.UserId != "" {
-			logs.Loggers.Info("HeartBeat:", zap.String("userId", req.UserId))
 			//往redis续命
 			userServices.SetOnlineUser(req.UserId)
 			//发送响应
 			var rep pb.SysMsg
 			rep.Message = "OnlineSuccess"
-			eProtoBuf := c.Reply(constant.RESPONSE_HEARTBEAT_CODE, &rep)
-			if eProtoBuf != nil {
-				logs.Loggers.Error("HeartBeat:", zap.Any("eProtoBuf", eProtoBuf))
-			}
+			c.Reply(constant.RESPONSE_HEARTBEAT_CODE, &rep)
+
 		}
 	})
 	//检查下线
@@ -114,7 +110,7 @@ func init() {
 
 	mode := ConfigMode{}
 	mode.Host = host
-	mode.Name = util.GetExternalIP().String()
+	mode.Name = utils.GetExternalIP().String()
 	mode.TcpPort = tcpPort
 	mode.Version = version
 	configMode = &mode

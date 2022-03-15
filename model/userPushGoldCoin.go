@@ -1,4 +1,4 @@
-package mode
+package model
 
 type UserPushGoldCoinMsg struct {
 	UserId    string `json:"userId"`

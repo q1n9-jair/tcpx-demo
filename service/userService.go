@@ -1,16 +1,15 @@
 package service
 
 import (
-	"context"
 	"encoding/json"
+	"github.com/fwhezfwhez/tcpx/all-language-clients/model"
 	"github.com/garyburd/redigo/redis"
-	"github.com/olivere/elastic/v7"
 	"go.uber.org/zap"
-	"im_socket_server/constant"
-	"im_socket_server/dao"
-	"im_socket_server/logs"
-	"im_socket_server/mode"
 	"strconv"
+	"tcpx-demo/constant"
+	"tcpx-demo/dao"
+	"tcpx-demo/logs"
+	mode "tcpx-demo/model"
 	"time"
 )
 
@@ -22,46 +21,22 @@ type UserServices struct {
 	//可放其他Services
 }
 type UserService interface {
-	/**
-	用户下线后处理的业务
-	*/
+	//SetOfflineUser 用户下线后处理的业务
 	SetOfflineUser(userId string) error
-	/***
-	操作用户在线的业务
-	*/
+	//SetOnlineUser 操作用户在线的业务
 	SetOnlineUser(userId string) error
-	/***
-	查看这个用户是否在线
-	*/
+	//GetUserIsOnline 查看这个用户是否在线
 	GetUserIsOnline(userId string) int
-	/****
-	检查用户是否真实连接
-	*/
+	//CheckRedisOnline 检查用户是否真实连接
 	CheckRedisOnline()
-	/***
-	获取用户基本信息
-	*/
-	GetUserInfo(userId string) (mode.User, error)
-	/***
-	根据用户性别 放到性别离线列表-离线
-	*/
+	//GetUserInfo 获取用户基本信息
+	GetUserInfo(userId string) (model.User, error)
+	// SexUserOffline 根据用户性别 放到性别离线列表-离线
 	SexUserOffline(userId string) error
-	/***
-	设置用户在哪台服务器连接
-	*/
+	// SetUserOnlineServer 设置用户在哪台服务器连接
 	SetUserOnlineServer(userId string) error
-	/****
-	删除用户在哪台服务器连接
-	*/
+	// DelUserOnlineServer 删除用户在哪台服务器连接
 	DelUserOnlineServer(userId string) error
-	/***
-	修改es用户下线状态
-	*/
-	UpdateEsOffUser(userId, nowUnix string) error
-	/***
-	修改es用户上线线状态
-	*/
-	UpdateEsOnLine(userId string) error
 }
 
 func (u *UserServices) SetOfflineUser(userId string) error {
@@ -91,11 +66,6 @@ func (u *UserServices) SetOfflineUser(userId string) error {
 		userPrivacySet = nil
 	}
 
-	//设置es下线用户
-	err = u.UpdateEsOffUser(userId, nowUnix)
-	if err != nil {
-		return err
-	}
 	//如果为空或者等于1 就可以设置
 	if userPrivacySet == nil || userPrivacySet.OnlineStatus == 1 {
 		err = u.DelUserOnlineServer(userId)
@@ -138,11 +108,6 @@ func (u *UserServices) SetOnlineUser(userId string) error {
 		if err != nil {
 			return err
 		}
-		//设置es上线
-		err = u.UpdateEsOnLine(userId)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -158,7 +123,6 @@ func (u *UserServices) GetUserIsOnline(userId string) int {
 
 //检查redis上的在线用户
 func (u *UserServices) CheckRedisOnline() {
-	logs.Loggers.Info("checkRedisOnline")
 	//设置redis
 	conn := dao.RedisDefaultPool.Get()
 	redisOnlineMap, redisOlErr := redis.StringMap(conn.Do("HGETALL", constant.USER_ONLINE_LIST))
@@ -241,60 +205,4 @@ func (u *UserServices) DelUserOnlineServer(userId string) error {
 	conn := dao.RedisDefaultPool.Get()
 	_, err := conn.Do("DEL", constant.USER_ONLINE_SERVER+userId, constant.ServerNameKey)
 	return err
-}
-
-/***
-修改用户下线状态
-*/
-func (u *UserServices) UpdateEsOffUser(userId, nowUnix string) error {
-	isEsUserInfo, err := u.Gets(userId)
-	if err != nil {
-		return err
-	}
-	if !isEsUserInfo {
-		return nil
-	}
-	res, err := dao.Client.Update().Index("users").Id(userId).Doc(map[string]interface{}{"isOnLine": 0, "lastLoginDate": nowUnix}).Do(context.Background())
-	if err != nil {
-		return nil
-	}
-	_, err = json.Marshal(res)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-/***
-修改用户在线状态
-*/
-func (u *UserServices) UpdateEsOnLine(userId string) error {
-	isEsUser, err := u.Gets(userId)
-	if err != nil {
-		return err
-	}
-	if !isEsUser {
-		return nil
-	}
-	query := elastic.NewTermsQuery("userId", userId)
-	script := elastic.NewScript("ctx._source.isOnLine = 1")
-	_, err = dao.Client.UpdateByQuery().Index("users").Script(script).Query(query).Do(context.Background())
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-//查找
-func (u *UserServices) Gets(userId string) (bool, error) {
-	//通过id查找
-	getUser, err := dao.Client.Get().Index("users").Id(userId).Do(context.Background())
-	if err != nil {
-		return false, err
-	}
-	isUser := false
-	if getUser != nil {
-		isUser = true
-	}
-	return isUser, nil
 }

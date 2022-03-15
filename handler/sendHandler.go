@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/fwhezfwhez/tcpx"
 	"go.uber.org/zap"
-	"im_socket_server/constant"
-	"im_socket_server/logs"
-	"im_socket_server/pb"
+	"tcpx-demo/constant"
+	"tcpx-demo/logs"
+	"tcpx-demo/pb"
 )
 
 /***
@@ -22,18 +23,22 @@ func Send(c *tcpx.Context) {
 	//如果是多台机器请自行写一个查找用户在哪台机器上登录的 然后进行发送消息
 	isOnline := c.GetPoolRef().GetClientPool(req.ToUserId).IsOnline()
 	if isOnline {
-		var getUserMsg pb.GetUserMsg
-		getUserMsg.UserId = req.ToUserId
-		getUserMsg.SendUserId = req.UserId
-		getUserMsg.MsgContent = req.MsgContent
+		getUserMsg := pb.GetUserMsg{
+			UserId:     req.UserId,
+			SendUserId: req.UserId,
+			MsgContent: req.MsgContent,
+		}
 		//发送消息
-		c.GetPoolRef().GetClientPool(req.ToUserId).ProtoBuf(constant.RESPONSE_GET_MSG_CODE, &getUserMsg)
+		err = c.GetPoolRef().GetClientPool(req.ToUserId).ProtoBuf(constant.RESPONSE_GET_MSG_CODE, &getUserMsg)
+		if err != nil {
+			fmt.Println(err)
+			c.Reply(constant.RESPONSE_SEND_MSG_CODE, &pb.SysMsg{Message: "fuck"})
+			return
+		}
 
 	} else {
 		//自行手写保存redis或mysql的未读消息
 	}
-	var sysMsg pb.SysMsg
-	sysMsg.Message = "ok"
 	//响应发送成功
-	c.Reply(constant.RESPONSE_SEND_MSG_CODE, &sysMsg)
+	c.Reply(constant.RESPONSE_SEND_MSG_CODE, &pb.SysMsg{Message: "ok"})
 }

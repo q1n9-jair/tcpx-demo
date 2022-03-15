@@ -1,21 +1,20 @@
-module im_socket_server
+module tcpx-demo
 
-go 1.14
+go 1.16
 
 require (
+	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/GUAIK-ORG/go-snowflake v0.0.0-20200116064823-220c4260e85f
-	github.com/fsnotify/fsnotify v1.4.7
-	github.com/fwhezfwhez/errorx v0.0.0-20201103065800-74ff431cb992
-	github.com/fwhezfwhez/tcpx v0.0.0-20201113070426-8be353ebcb24
-	github.com/garyburd/redigo v1.6.2
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/golang/protobuf v1.4.2
-	github.com/olivere/elastic/v7 v7.0.21
+	github.com/fsnotify/fsnotify v1.5.1
+	github.com/fwhezfwhez/errorx v0.0.0-20200421094746-a2781b3fd382
+	github.com/fwhezfwhez/tcpx v0.0.0-20210320021234-0c5332cf59e0
+	github.com/garyburd/redigo v1.6.3
+	github.com/golang/protobuf v1.5.2
 	github.com/robfig/cron v1.2.0
-	github.com/spf13/viper v1.7.1
-	github.com/streadway/amqp v1.0.0
-	go.uber.org/zap v1.10.0
-	google.golang.org/protobuf v1.23.0
-	gorm.io/driver/mysql v1.0.4
-	gorm.io/gorm v1.21.1
+	github.com/spf13/viper v1.10.1
+	go.uber.org/zap v1.21.0
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+	google.golang.org/protobuf v1.27.1
+	gorm.io/driver/mysql v1.3.2
+	gorm.io/gorm v1.23.2
 )
